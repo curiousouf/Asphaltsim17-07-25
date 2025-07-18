@@ -17,6 +17,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { TrendingUp, Truck, Clock, Target } from 'lucide-react';
+import { useLanguage } from '../contexts/LanguageContext';
 import type { OptimizationResult } from '../types/simulation';
 
 interface OptimizationChartsProps {
@@ -26,33 +27,35 @@ interface OptimizationChartsProps {
 
 // Custom Tooltip Component
 const CustomTooltip = ({ active, payload }: { active?: boolean; payload?: any[] }) => {
+    const { t } = useLanguage();
+
     if (active && payload && payload.length) {
         const data = payload[0].payload;
         return (
             <div className="rounded-lg border bg-background p-3 shadow-lg">
                 <div className="space-y-2">
                     <div className="flex items-center justify-between">
-                        <span className="text-xs font-medium text-muted-foreground">Configuration</span>
-                        <Badge variant="outline">{data.trucks} trucks, {data.initialQueue} queue</Badge>
+                        <span className="text-xs font-medium text-muted-foreground">{t('optCharts.configuration')}</span>
+                        <Badge variant="outline">{data.trucks} {t('optCharts.trucks')}, {data.initialQueue} {t('optCharts.queue')}</Badge>
                     </div>
                     <Separator className="my-1" />
                     <div className="space-y-1 text-sm">
                         <div className="flex justify-between">
-                            <span className="text-muted-foreground">Idle Time:</span>
-                            <span className="font-medium">{data.idleTime.toFixed(1)} hrs</span>
+                            <span className="text-muted-foreground">{t('optCharts.idleTime')}</span>
+                            <span className="font-medium">{data.idleTime.toFixed(1)} {t('results.hours')}</span>
                         </div>
                         <div className="flex justify-between">
-                            <span className="text-muted-foreground">Total Time:</span>
-                            <span className="font-medium">{data.totalTime.toFixed(1)} hrs</span>
+                            <span className="text-muted-foreground">{t('optCharts.totalTime')}</span>
+                            <span className="font-medium">{data.totalTime.toFixed(1)} {t('results.hours')}</span>
                         </div>
                         <div className="flex justify-between">
-                            <span className="text-muted-foreground">Utilization:</span>
+                            <span className="text-muted-foreground">{t('optCharts.utilization')}</span>
                             <span className="font-medium">{data.utilization.toFixed(1)}%</span>
                         </div>
                         {data.isOptimal && (
                             <div className="flex items-center gap-1 text-green-600">
                                 <Target className="h-3 w-3" />
-                                <span className="text-xs font-semibold">Optimal Configuration</span>
+                                <span className="text-xs font-semibold">{t('optCharts.optimalPoint')}</span>
                             </div>
                         )}
                     </div>
@@ -65,6 +68,8 @@ const CustomTooltip = ({ active, payload }: { active?: boolean; payload?: any[] 
 
 // Summary Statistics Component
 const OptimizationStats = ({ results, optimal }: { results: OptimizationResult[]; optimal: OptimizationResult | null }) => {
+    const { t } = useLanguage();
+
     const stats = useMemo(() => {
         if (!results.length) return null;
 
@@ -93,7 +98,7 @@ const OptimizationStats = ({ results, optimal }: { results: OptimizationResult[]
                 <CardHeader className="pb-3">
                     <CardTitle className="text-sm font-medium text-blue-900 dark:text-blue-100 flex items-center gap-2">
                         <Target className="h-4 w-4" />
-                        Total Configurations
+                        {t('optCharts.totalConfigs')}
                     </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -107,13 +112,13 @@ const OptimizationStats = ({ results, optimal }: { results: OptimizationResult[]
                 <CardHeader className="pb-3">
                     <CardTitle className="text-sm font-medium text-green-900 dark:text-green-100 flex items-center gap-2">
                         <Clock className="h-4 w-4" />
-                        Best Idle Time
+                        {t('optCharts.bestIdleTime')}
                     </CardTitle>
                 </CardHeader>
                 <CardContent>
                     <div className="text-2xl font-bold text-green-900 dark:text-green-100">
                         {stats.bestIdleTime.toFixed(1)}
-                        <span className="ml-1 text-sm font-normal">hrs</span>
+                        <span className="ml-1 text-sm font-normal">{t('results.hours')}</span>
                     </div>
                 </CardContent>
             </Card>
@@ -122,13 +127,13 @@ const OptimizationStats = ({ results, optimal }: { results: OptimizationResult[]
                 <CardHeader className="pb-3">
                     <CardTitle className="text-sm font-medium text-purple-900 dark:text-purple-100 flex items-center gap-2">
                         <TrendingUp className="h-4 w-4" />
-                        Avg Idle Time
+                        {t('optCharts.avgIdleTime')}
                     </CardTitle>
                 </CardHeader>
                 <CardContent>
                     <div className="text-2xl font-bold text-purple-900 dark:text-purple-100">
                         {stats.avgIdleTime.toFixed(1)}
-                        <span className="ml-1 text-sm font-normal">hrs</span>
+                        <span className="ml-1 text-sm font-normal">{t('results.hours')}</span>
                     </div>
                 </CardContent>
             </Card>
@@ -137,7 +142,7 @@ const OptimizationStats = ({ results, optimal }: { results: OptimizationResult[]
                 <CardHeader className="pb-3">
                     <CardTitle className="text-sm font-medium text-orange-900 dark:text-orange-100 flex items-center gap-2">
                         <Truck className="h-4 w-4" />
-                        Avg Utilization
+                        {t('optCharts.avgUtilization')}
                     </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -151,7 +156,7 @@ const OptimizationStats = ({ results, optimal }: { results: OptimizationResult[]
                 <CardHeader className="pb-3">
                     <CardTitle className="text-sm font-medium text-emerald-900 dark:text-emerald-100 flex items-center gap-2">
                         <Target className="h-4 w-4" />
-                        Optimal Config
+                        {t('optCharts.optimalConfig')}
                     </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -165,6 +170,8 @@ const OptimizationStats = ({ results, optimal }: { results: OptimizationResult[]
 };
 
 export function OptimizationCharts({ results, optimal }: OptimizationChartsProps) {
+    const { t } = useLanguage();
+
     // Enhanced data preparation
     const scatterData = useMemo(() =>
         results.map(result => ({
@@ -242,13 +249,13 @@ export function OptimizationCharts({ results, optimal }: OptimizationChartsProps
                 <CardHeader className="pb-4">
                     <div className="flex items-center justify-between">
                         <div>
-                            <CardTitle className="text-xl">Configuration Analysis</CardTitle>
+                            <CardTitle className="text-xl">{t('optCharts.configurationAnalysis')}</CardTitle>
                             <CardDescription className="mt-1">
-                                Truck count vs paver idle time with optimal configuration highlighted
+                                {t('optCharts.configurationAnalysisDesc')}
                             </CardDescription>
                         </div>
                         <Badge variant="secondary" className="hidden sm:flex">
-                            {scatterData.length} configurations
+                            {scatterData.length} {t('optCharts.configurations')}
                         </Badge>
                     </div>
                 </CardHeader>
@@ -260,22 +267,22 @@ export function OptimizationCharts({ results, optimal }: OptimizationChartsProps
                                 <XAxis
                                     type="number"
                                     dataKey="trucks"
-                                    name="Truck Count"
+                                    name={t('optCharts.truckCount')}
                                     stroke="hsl(var(--muted-foreground))"
                                     fontSize={12}
                                     tickLine={false}
                                     axisLine={false}
-                                    label={{ value: 'Number of Trucks', position: 'insideBottom', offset: -10, style: { textAnchor: 'middle' } }}
+                                    label={{ value: t('optCharts.numberOfTrucks'), position: 'insideBottom', offset: -10, style: { textAnchor: 'middle' } }}
                                 />
                                 <YAxis
                                     type="number"
                                     dataKey="idleTime"
-                                    name="Idle Time"
+                                    name={t('optCharts.idleTimeCol')}
                                     stroke="hsl(var(--muted-foreground))"
                                     fontSize={12}
                                     tickLine={false}
                                     axisLine={false}
-                                    label={{ value: 'Paver Idle Time (hours)', angle: -90, position: 'insideLeft', style: { textAnchor: 'middle' } }}
+                                    label={{ value: t('optCharts.paverIdleHours'), angle: -90, position: 'insideLeft', style: { textAnchor: 'middle' } }}
                                 />
                                 <Tooltip content={<CustomTooltip />} cursor={{ strokeDasharray: '3 3' }} />
                                 <Scatter
@@ -311,9 +318,9 @@ export function OptimizationCharts({ results, optimal }: OptimizationChartsProps
                 {/* Bar Chart: Average Idle Time by Truck Count */}
                 <Card className="overflow-hidden">
                     <CardHeader className="pb-4">
-                        <CardTitle className="text-xl">Idle Time Range Analysis by Truck Count</CardTitle>
+                        <CardTitle className="text-xl">{t('optCharts.idleTimeRangeAnalysis')}</CardTitle>
                         <CardDescription className="mt-1">
-                            Stacked view showing the range of idle times across different truck configurations
+                            {t('optCharts.idleTimeRangeDesc')}
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
@@ -327,32 +334,32 @@ export function OptimizationCharts({ results, optimal }: OptimizationChartsProps
                                         fontSize={12}
                                         tickLine={false}
                                         axisLine={false}
-                                        label={{ value: 'Number of Trucks', position: 'insideBottom', offset: -10, style: { textAnchor: 'middle' } }}
+                                        label={{ value: t('optCharts.numberOfTrucks'), position: 'insideBottom', offset: -10, style: { textAnchor: 'middle' } }}
                                     />
                                     <YAxis
                                         stroke="hsl(var(--muted-foreground))"
                                         fontSize={12}
                                         tickLine={false}
                                         axisLine={false}
-                                        label={{ value: 'Idle Time (hours)', angle: -90, position: 'insideLeft', style: { textAnchor: 'middle' } }}
+                                        label={{ value: t('optCharts.idleTimeHours'), angle: -90, position: 'insideLeft', style: { textAnchor: 'middle' } }}
                                     />
                                     <Tooltip
                                         formatter={(value: number, name: string) => {
-                                            if (name === 'Minimum') return [`${value.toFixed(1)} hrs`, 'Minimum'];
-                                            if (name === 'Average Range') return [`${(value).toFixed(1)} hrs`, 'To Average'];
-                                            if (name === 'Maximum Range') return [`${(value).toFixed(1)} hrs`, 'To Maximum'];
-                                            return [`${value.toFixed(1)} hrs`, name];
+                                            if (name === t('optCharts.minimum')) return [`${value.toFixed(1)} ${t('results.hours')}`, t('optCharts.minimum')];
+                                            if (name === t('optCharts.averageRange')) return [`${(value).toFixed(1)} ${t('results.hours')}`, t('optCharts.toAverage')];
+                                            if (name === t('optCharts.maximumRange')) return [`${(value).toFixed(1)} ${t('results.hours')}`, t('optCharts.toMaximum')];
+                                            return [`${value.toFixed(1)} ${t('results.hours')}`, name];
                                         }}
                                         contentStyle={{ borderRadius: '8px', border: '1px solid hsl(var(--border))' }}
-                                        labelFormatter={(label) => `${label} Trucks`}
+                                        labelFormatter={(label) => `${label} ${t('optCharts.trucksLabel')}`}
                                     />
                                     <Legend
                                         wrapperStyle={{ paddingTop: '20px' }}
                                         iconType="rect"
                                     />
-                                    <Bar dataKey="baseIdleTime" stackId="a" fill={colors.min} name="Minimum" radius={[0, 0, 0, 0]} />
-                                    <Bar dataKey="midRangeIdleTime" stackId="a" fill={colors.avg} name="Average Range" radius={[0, 0, 0, 0]} />
-                                    <Bar dataKey="upperRangeIdleTime" stackId="a" fill={colors.max} name="Maximum Range" radius={[2, 2, 0, 0]} />
+                                    <Bar dataKey="baseIdleTime" stackId="a" fill={colors.min} name={t('optCharts.minimum')} radius={[0, 0, 0, 0]} />
+                                    <Bar dataKey="midRangeIdleTime" stackId="a" fill={colors.avg} name={t('optCharts.averageRange')} radius={[0, 0, 0, 0]} />
+                                    <Bar dataKey="upperRangeIdleTime" stackId="a" fill={colors.max} name={t('optCharts.maximumRange')} radius={[2, 2, 0, 0]} />
                                 </BarChart>
                             </ResponsiveContainer>
                         </div>
@@ -362,9 +369,9 @@ export function OptimizationCharts({ results, optimal }: OptimizationChartsProps
                 {/* Top Configurations */}
                 <Card className="overflow-hidden">
                     <CardHeader className="pb-4">
-                        <CardTitle className="text-xl">Top 10 Configurations</CardTitle>
+                        <CardTitle className="text-xl">{t('optCharts.topConfigurations')}</CardTitle>
                         <CardDescription className="mt-1">
-                            Best configurations ranked by efficiency and resource optimization
+                            {t('optCharts.topConfigurationsDesc')}
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
@@ -372,11 +379,11 @@ export function OptimizationCharts({ results, optimal }: OptimizationChartsProps
                             <table className="w-full text-sm">
                                 <thead>
                                     <tr className="border-b border-border">
-                                        <th className="text-left p-3 font-medium text-muted-foreground">Rank</th>
-                                        <th className="text-left p-3 font-medium text-muted-foreground">Trucks</th>
-                                        <th className="text-left p-3 font-medium text-muted-foreground">Queue</th>
-                                        <th className="text-left p-3 font-medium text-muted-foreground">Idle Time</th>
-                                        <th className="text-left p-3 font-medium text-muted-foreground">Utilization</th>
+                                        <th className="text-left p-3 font-medium text-muted-foreground">{t('optCharts.rank')}</th>
+                                        <th className="text-left p-3 font-medium text-muted-foreground">{t('optCharts.trucks')}</th>
+                                        <th className="text-left p-3 font-medium text-muted-foreground">{t('optCharts.queueCol')}</th>
+                                        <th className="text-left p-3 font-medium text-muted-foreground">{t('optCharts.idleTimeCol')}</th>
+                                        <th className="text-left p-3 font-medium text-muted-foreground">{t('optCharts.utilizationCol')}</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -399,7 +406,7 @@ export function OptimizationCharts({ results, optimal }: OptimizationChartsProps
                                                 </td>
                                                 <td className="p-3">{result.truckCount}</td>
                                                 <td className="p-3">{result.initialQueue}</td>
-                                                <td className="p-3">{(result.paverIdleTime / 60).toFixed(1)} hrs</td>
+                                                <td className="p-3">{(result.paverIdleTime / 60).toFixed(1)} {t('results.hours')}</td>
                                                 <td className="p-3">{(result.utilization * 100).toFixed(1)}%</td>
                                             </tr>
                                         );

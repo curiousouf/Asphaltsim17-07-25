@@ -12,6 +12,8 @@ import { AsphaltSimulation } from '../lib/simulation';
 import { runOptimization, findOptimalConfiguration, type OptimizationParams } from '../lib/optimizer';
 import { SimulationCharts } from './SimulationCharts';
 import { OptimizationCharts } from './OptimizationCharts';
+import { LanguageSwitcher } from './LanguageSwitcher';
+import { useLanguage } from '../contexts/LanguageContext';
 
 const defaultParams: SimulationParams = {
     totalTrucks: 8,
@@ -29,6 +31,7 @@ const defaultParams: SimulationParams = {
 };
 
 export function SimulationDashboard() {
+    const { t } = useLanguage();
     const [params, setParams] = useState<SimulationParams>(defaultParams);
     const [result, setResult] = useState<SimulationResult | null>(null);
     const [optimizationResults, setOptimizationResults] = useState<OptimizationResult[]>([]);
@@ -92,17 +95,22 @@ export function SimulationDashboard() {
 
     return (
         <div className="container mx-auto p-6 space-y-6">
-            <div className="text-center">
-                <h1 className="text-4xl font-bold tracking-tight">Asphalt Laying Simulation</h1>
-                <p className="text-muted-foreground mt-2">
-                    Optimize truck fleet operations with realistic variable speeds for asphalt laying projects
-                </p>
+            <div className="flex justify-between items-start">
+                <div className="text-center flex-1">
+                    <h1 className="text-4xl font-bold tracking-tight">{t('app.title')}</h1>
+                    <p className="text-muted-foreground mt-2">
+                        {t('app.description')}
+                    </p>
+                </div>
+                <div className="flex-shrink-0 ml-4">
+                    <LanguageSwitcher />
+                </div>
             </div>
 
             <Tabs defaultValue="simulation" className="w-full">
                 <TabsList className="grid w-full grid-cols-2">
-                    <TabsTrigger value="simulation">Single Simulation</TabsTrigger>
-                    <TabsTrigger value="optimization">Fleet Optimization</TabsTrigger>
+                    <TabsTrigger value="simulation">{t('tabs.simulation')}</TabsTrigger>
+                    <TabsTrigger value="optimization">{t('tabs.optimization')}</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="simulation" className="space-y-6">
@@ -110,15 +118,15 @@ export function SimulationDashboard() {
                         {/* Parameters Card */}
                         <Card>
                             <CardHeader>
-                                <CardTitle>Simulation Parameters</CardTitle>
+                                <CardTitle>{t('params.title')}</CardTitle>
                                 <CardDescription>
-                                    Configure the simulation settings
+                                    {t('params.description')}
                                 </CardDescription>
                             </CardHeader>
                             <CardContent className="space-y-4">
                                 <div className="grid grid-cols-2 gap-4">
                                     <div>
-                                        <Label htmlFor="totalTrucks">Total Trucks</Label>
+                                        <Label htmlFor="totalTrucks">{t('params.totalTrucks')}</Label>
                                         <Input
                                             id="totalTrucks"
                                             type="number"
@@ -129,7 +137,7 @@ export function SimulationDashboard() {
                                         />
                                     </div>
                                     <div>
-                                        <Label htmlFor="targetQuantity">Target Quantity (tons)</Label>
+                                        <Label htmlFor="targetQuantity">{t('params.targetQuantity')}</Label>
                                         <Input
                                             id="targetQuantity"
                                             type="number"
@@ -142,7 +150,7 @@ export function SimulationDashboard() {
 
                                 <div className="grid grid-cols-2 gap-4">
                                     <div>
-                                        <Label htmlFor="truckCapacity">Truck Capacity (tons)</Label>
+                                        <Label htmlFor="truckCapacity">{t('params.truckCapacity')}</Label>
                                         <Input
                                             id="truckCapacity"
                                             type="number"
@@ -152,7 +160,7 @@ export function SimulationDashboard() {
                                         />
                                     </div>
                                     <div>
-                                        <Label htmlFor="distance">Distance (km)</Label>
+                                        <Label htmlFor="distance">{t('params.distance')}</Label>
                                         <Input
                                             id="distance"
                                             type="number"
@@ -168,7 +176,7 @@ export function SimulationDashboard() {
 
                                 <div className="grid grid-cols-2 gap-4">
                                     <div>
-                                        <Label htmlFor="plantLoadingTime">Plant Loading Time (min)</Label>
+                                        <Label htmlFor="plantLoadingTime">{t('params.plantLoadingTime')}</Label>
                                         <Input
                                             id="plantLoadingTime"
                                             type="number"
@@ -178,7 +186,7 @@ export function SimulationDashboard() {
                                         />
                                     </div>
                                     <div>
-                                        <Label htmlFor="paverUnloadingTime">Paver Unloading Time (min)</Label>
+                                        <Label htmlFor="paverUnloadingTime">{t('params.paverUnloadingTime')}</Label>
                                         <Input
                                             id="paverUnloadingTime"
                                             type="number"
@@ -191,7 +199,7 @@ export function SimulationDashboard() {
 
                                 <div className="grid grid-cols-2 gap-4">
                                     <div>
-                                        <Label htmlFor="loadedTruckSpeedMin">Loaded Speed Min (km/h)</Label>
+                                        <Label htmlFor="loadedTruckSpeedMin">{t('params.loadedSpeedMin')}</Label>
                                         <Input
                                             id="loadedTruckSpeedMin"
                                             type="number"
@@ -202,7 +210,7 @@ export function SimulationDashboard() {
                                         />
                                     </div>
                                     <div>
-                                        <Label htmlFor="loadedTruckSpeedMax">Loaded Speed Max (km/h)</Label>
+                                        <Label htmlFor="loadedTruckSpeedMax">{t('params.loadedSpeedMax')}</Label>
                                         <Input
                                             id="loadedTruckSpeedMax"
                                             type="number"
@@ -216,7 +224,7 @@ export function SimulationDashboard() {
 
                                 <div className="grid grid-cols-2 gap-4">
                                     <div>
-                                        <Label htmlFor="emptyTruckSpeedMin">Empty Speed Min (km/h)</Label>
+                                        <Label htmlFor="emptyTruckSpeedMin">{t('params.emptySpeedMin')}</Label>
                                         <Input
                                             id="emptyTruckSpeedMin"
                                             type="number"
@@ -227,7 +235,7 @@ export function SimulationDashboard() {
                                         />
                                     </div>
                                     <div>
-                                        <Label htmlFor="emptyTruckSpeedMax">Empty Speed Max (km/h)</Label>
+                                        <Label htmlFor="emptyTruckSpeedMax">{t('params.emptySpeedMax')}</Label>
                                         <Input
                                             id="emptyTruckSpeedMax"
                                             type="number"
@@ -240,7 +248,7 @@ export function SimulationDashboard() {
                                 </div>
 
                                 <div>
-                                    <Label htmlFor="truckInitialQueue">Initial Queue at Paver</Label>
+                                    <Label htmlFor="truckInitialQueue">{t('params.initialQueue')}</Label>
                                     <Input
                                         id="truckInitialQueue"
                                         type="number"
@@ -256,7 +264,7 @@ export function SimulationDashboard() {
                                     disabled={isRunning}
                                     className="w-full"
                                 >
-                                    {isRunning ? 'Running Simulation...' : 'Run Simulation'}
+                                    {isRunning ? t('button.runningSimulation') : t('button.runSimulation')}
                                 </Button>
                             </CardContent>
                         </Card>
@@ -264,9 +272,9 @@ export function SimulationDashboard() {
                         {/* Results Summary Card */}
                         <Card>
                             <CardHeader>
-                                <CardTitle>Simulation Results</CardTitle>
+                                <CardTitle>{t('results.title')}</CardTitle>
                                 <CardDescription>
-                                    Key performance metrics
+                                    {t('results.description')}
                                 </CardDescription>
                             </CardHeader>
                             <CardContent>
@@ -274,16 +282,16 @@ export function SimulationDashboard() {
                                     <div className="space-y-4">
                                         <div className="grid grid-cols-2 gap-4">
                                             <div>
-                                                <Label className="text-sm font-medium">Total Time</Label>
+                                                <Label className="text-sm font-medium">{t('results.totalTime')}</Label>
                                                 <div className="text-2xl font-bold">
-                                                    {(result.totalTime / 60).toFixed(1)} hrs
+                                                    {(result.totalTime / 60).toFixed(1)} {t('results.hours')}
                                                 </div>
                                             </div>
                                             <div>
-                                                <Label className="text-sm font-medium">Completion Status</Label>
+                                                <Label className="text-sm font-medium">{t('results.completionStatus')}</Label>
                                                 <div>
                                                     <Badge variant={result.completed ? 'default' : 'destructive'}>
-                                                        {result.completed ? 'Completed' : 'Not Completed'}
+                                                        {result.completed ? t('results.completed') : t('results.notCompleted')}
                                                     </Badge>
                                                 </div>
                                             </div>
@@ -291,7 +299,7 @@ export function SimulationDashboard() {
 
                                         <div className="space-y-3">
                                             <div>
-                                                <Label className="text-sm font-medium">Plant Utilization</Label>
+                                                <Label className="text-sm font-medium">{t('results.plantUtilization')}</Label>
                                                 <Progress value={result.plantUtilization * 100} className="mt-1" />
                                                 <div className="text-sm text-muted-foreground">
                                                     {(result.plantUtilization * 100).toFixed(1)}%
@@ -299,7 +307,7 @@ export function SimulationDashboard() {
                                             </div>
 
                                             <div>
-                                                <Label className="text-sm font-medium">Paver Utilization</Label>
+                                                <Label className="text-sm font-medium">{t('results.paverUtilization')}</Label>
                                                 <Progress value={result.paverUtilization * 100} className="mt-1" />
                                                 <div className="text-sm text-muted-foreground">
                                                     {(result.paverUtilization * 100).toFixed(1)}%
@@ -307,7 +315,7 @@ export function SimulationDashboard() {
                                             </div>
 
                                             <div>
-                                                <Label className="text-sm font-medium">Effective Paver Utilization</Label>
+                                                <Label className="text-sm font-medium">{t('results.effectivePaverUtilization')}</Label>
                                                 <Progress value={result.effectivePaverUtilization * 100} className="mt-1" />
                                                 <div className="text-sm text-muted-foreground">
                                                     {(result.effectivePaverUtilization * 100).toFixed(1)}%
@@ -318,37 +326,18 @@ export function SimulationDashboard() {
                                         <div className="grid grid-cols-2 gap-4 text-sm">
                                             <div>
                                                 <Label className="text-xs font-medium text-muted-foreground">
-                                                    Total Paver Idle Time
+                                                    {t('results.totalPaverIdleTime')}
                                                 </Label>
                                                 <div className="font-semibold">
-                                                    {(result.paverIdleTime / 60).toFixed(1)} hrs
+                                                    {(result.paverIdleTime / 60).toFixed(1)} {t('results.hours')}
                                                 </div>
                                             </div>
                                             <div>
                                                 <Label className="text-xs font-medium text-muted-foreground">
-                                                    Effective Paver Idle Time
+                                                    {t('results.effectivePaverIdleTime')}
                                                 </Label>
                                                 <div className="font-semibold">
-                                                    {(result.effectivePaverIdleTime / 60).toFixed(1)} hrs
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div className="grid grid-cols-2 gap-4 text-sm">
-                                            <div>
-                                                <Label className="text-xs font-medium text-muted-foreground">
-                                                    Effective Paver Time
-                                                </Label>
-                                                <div className="font-semibold">
-                                                    {(result.effectivePaverTime / 60).toFixed(1)} hrs
-                                                </div>
-                                            </div>
-                                            <div>
-                                                <Label className="text-xs font-medium text-muted-foreground">
-                                                    Longest Idle Between Unloads
-                                                </Label>
-                                                <div className="font-semibold">
-                                                    {result.longestIdleBetweenUnloads.toFixed(1)} min
+                                                    {(result.effectivePaverIdleTime / 60).toFixed(1)} {t('results.hours')}
                                                 </div>
                                             </div>
                                         </div>
@@ -356,19 +345,38 @@ export function SimulationDashboard() {
                                         <div className="grid grid-cols-2 gap-4 text-sm">
                                             <div>
                                                 <Label className="text-xs font-medium text-muted-foreground">
-                                                    Material Laid
+                                                    {t('results.effectivePaverTime')}
                                                 </Label>
                                                 <div className="font-semibold">
-                                                    {result.snapshots[result.snapshots.length - 1]?.paverLaid || 0} tons
+                                                    {(result.effectivePaverTime / 60).toFixed(1)} {t('results.hours')}
                                                 </div>
                                             </div>
                                             <div>
                                                 <Label className="text-xs font-medium text-muted-foreground">
-                                                    Project Completed
+                                                    {t('results.longestIdleBetweenUnloads')}
+                                                </Label>
+                                                <div className="font-semibold">
+                                                    {result.longestIdleBetweenUnloads.toFixed(1)} {t('results.minutes')}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="grid grid-cols-2 gap-4 text-sm">
+                                            <div>
+                                                <Label className="text-xs font-medium text-muted-foreground">
+                                                    {t('results.materialLaid')}
+                                                </Label>
+                                                <div className="font-semibold">
+                                                    {result.snapshots[result.snapshots.length - 1]?.paverLaid || 0} {t('results.tons')}
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <Label className="text-xs font-medium text-muted-foreground">
+                                                    {t('results.projectCompleted')}
                                                 </Label>
                                                 <div className="font-semibold">
                                                     <Badge variant={result.completed ? "default" : "secondary"}>
-                                                        {result.completed ? "Yes" : "No"}
+                                                        {result.completed ? t('results.yes') : t('results.no')}
                                                     </Badge>
                                                 </div>
                                             </div>
@@ -376,7 +384,7 @@ export function SimulationDashboard() {
                                     </div>
                                 ) : (
                                     <div className="text-center text-muted-foreground py-8">
-                                        Run a simulation to see results
+                                        {t('results.noData')}
                                     </div>
                                 )}
                             </CardContent>
@@ -390,10 +398,9 @@ export function SimulationDashboard() {
                 <TabsContent value="optimization" className="space-y-6">
                     <Card>
                         <CardHeader>
-                            <CardTitle>Fleet Optimization</CardTitle>
+                            <CardTitle>{t('optimization.title')}</CardTitle>
                             <CardDescription>
-                                Find the optimal number of trucks and initial queue size to minimize paver idle time.
-                                Tests configurations from 3 trucks up to your current setting + 5 trucks ({params.totalTrucks + 5}).
+                                {t('optimization.description').replace('{maxTrucks}', (params.totalTrucks + 5).toString())}
                             </CardDescription>
                         </CardHeader>
                         <CardContent>
@@ -403,70 +410,70 @@ export function SimulationDashboard() {
                                     disabled={isOptimizing}
                                     className="w-full"
                                 >
-                                    {isOptimizing ? 'Running Optimization...' : 'Run Optimization Analysis'}
+                                    {isOptimizing ? t('button.runningOptimization') : t('button.runOptimization')}
                                 </Button>
 
                                 {optimal && (
                                     <div className="bg-muted p-4 rounded-lg">
-                                        <h3 className="font-semibold mb-2">Optimal Configuration Found:</h3>
+                                        <h3 className="font-semibold mb-2">{t('optimization.optimalFound')}</h3>
                                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                                             <div>
                                                 <Label className="text-xs font-medium text-muted-foreground">
-                                                    Trucks
+                                                    {t('optimization.trucks')}
                                                 </Label>
                                                 <div className="font-bold text-lg">{optimal.truckCount}</div>
                                             </div>
                                             <div>
                                                 <Label className="text-xs font-medium text-muted-foreground">
-                                                    Initial Queue
+                                                    {t('optimization.initialQueue')}
                                                 </Label>
                                                 <div className="font-bold text-lg">{optimal.initialQueue}</div>
                                             </div>
                                             <div>
                                                 <Label className="text-xs font-medium text-muted-foreground">
-                                                    Total Paver Idle Time
+                                                    {t('optimization.totalPaverIdleTime')}
                                                 </Label>
                                                 <div className="font-bold text-lg">
-                                                    {(optimal.paverIdleTime / 60).toFixed(1)}h
+                                                    {(optimal.paverIdleTime / 60).toFixed(1)}{t('results.hours')}
                                                 </div>
                                             </div>
                                             <div>
                                                 <Label className="text-xs font-medium text-muted-foreground">
-                                                    Effective Paver Idle Time
+                                                    {t('optimization.effectivePaverIdleTime')}
                                                 </Label>
                                                 <div className="font-bold text-lg">
-                                                    {(optimal.effectivePaverIdleTime / 60).toFixed(1)}h
+                                                    {(optimal.effectivePaverIdleTime / 60).toFixed(1)}{t('results.hours')}
                                                 </div>
                                             </div>
                                         </div>
                                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm mt-4">
                                             <div>
                                                 <Label className="text-xs font-medium text-muted-foreground">
-                                                    Total Time
+                                                    {t('optimization.totalTime')}
                                                 </Label>
                                                 <div className="font-bold text-lg">
-                                                    {(optimal.simulationTime / 60).toFixed(1)}h
+                                                    {(optimal.simulationTime / 60).toFixed(1)}{t('results.hours')}
                                                 </div>
                                             </div>
                                             <div>
                                                 <Label className="text-xs font-medium text-muted-foreground">
-                                                    Effective Paver Time
+                                                    {t('optimization.effectivePaverTime')}
                                                 </Label>
                                                 <div className="font-bold text-lg">
-                                                    {(optimal.effectivePaverTime / 60).toFixed(1)}h
+                                                    {(optimal.effectivePaverTime / 60).toFixed(1)}{t('results.hours')}
                                                 </div>
                                             </div>
                                             <div>
                                                 <Label className="text-xs font-medium text-muted-foreground">
-                                                    Longest Idle Between Unloads
+                                                    {t('optimization.longestIdleBetweenUnloads')}
                                                 </Label>
                                                 <div className="font-bold text-lg">
-                                                    {optimal.longestIdleBetweenUnloads.toFixed(1)}min
+                                                    {optimal.longestIdleBetweenUnloads.toFixed(1)}{t('results.minutes')}
                                                 </div>
                                             </div>
                                             <div>
                                                 <Label className="text-xs font-medium text-muted-foreground">
-                                                    Paver Utilization
+                                                    {t('optimization.paverUtilization')}
                                                 </Label>
                                                 <div className="font-bold text-lg">
                                                     {(optimal.utilization * 100).toFixed(1)}%
@@ -477,7 +484,7 @@ export function SimulationDashboard() {
                                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm mt-4">
                                             <div>
                                                 <Label className="text-xs font-medium text-muted-foreground">
-                                                    Effective Paver Utilization
+                                                    {t('optimization.effectivePaverUtilization')}
                                                 </Label>
                                                 <div className="font-bold text-lg">
                                                     {(optimal.effectivePaverUtilization * 100).toFixed(1)}%

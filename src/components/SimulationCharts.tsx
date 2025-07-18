@@ -17,6 +17,7 @@ import {
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
+import { useLanguage } from '../contexts/LanguageContext';
 import type { SimulationResult } from '../types/simulation';
 
 interface SimulationChartsProps {
@@ -25,13 +26,15 @@ interface SimulationChartsProps {
 
 // Custom Tooltip Component
 const CustomTooltip = ({ active, payload, label }: any) => {
+    const { t } = useLanguage();
+
     if (active && payload && payload.length) {
         return (
             <div className="rounded-lg border bg-background p-3 shadow-lg">
                 <div className="space-y-1">
                     <div className="flex items-center justify-between gap-4">
-                        <span className="text-xs font-medium text-muted-foreground">Time</span>
-                        <span className="text-sm font-semibold">{label} hours</span>
+                        <span className="text-xs font-medium text-muted-foreground">{t('charts.time')}</span>
+                        <span className="text-sm font-semibold">{label} {t('results.hours')}</span>
                     </div>
                     <Separator className="my-1" />
                     {payload.map((entry: any, index: number) => (
@@ -46,7 +49,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
                             <span className="text-sm font-medium">
                                 {typeof entry.value === 'number' ? entry.value.toLocaleString() : entry.value}
                                 {entry.name.includes('%') ? '%' : ''}
-                                {entry.name.includes('tons') ? ' tons' : ''}
+                                {entry.name.includes(t('charts.tons')) ? ` ${t('charts.tons')}` : ''}
                             </span>
                         </div>
                     ))}
@@ -59,6 +62,8 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 
 // Summary Statistics Component
 const SummaryStats = ({ result }: { result: SimulationResult }) => {
+    const { t } = useLanguage();
+
     const stats = useMemo(() => {
         const lastSnapshot = result.snapshots[result.snapshots.length - 1];
         const totalProduced = lastSnapshot?.plantProduced || 0;
@@ -82,13 +87,13 @@ const SummaryStats = ({ result }: { result: SimulationResult }) => {
             <Card className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950/50 dark:to-blue-900/50">
                 <CardHeader className="pb-3">
                     <CardTitle className="text-sm font-medium text-blue-900 dark:text-blue-100">
-                        Total Produced
+                        {t('charts.totalProduced')}
                     </CardTitle>
                 </CardHeader>
                 <CardContent>
                     <div className="text-2xl font-bold text-blue-900 dark:text-blue-100">
                         {stats.totalProduced.toLocaleString()}
-                        <span className="ml-1 text-sm font-normal">tons</span>
+                        <span className="ml-1 text-sm font-normal">{t('charts.tons')}</span>
                     </div>
                 </CardContent>
             </Card>
@@ -96,13 +101,13 @@ const SummaryStats = ({ result }: { result: SimulationResult }) => {
             <Card className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-950/50 dark:to-green-900/50">
                 <CardHeader className="pb-3">
                     <CardTitle className="text-sm font-medium text-green-900 dark:text-green-100">
-                        Total Laid
+                        {t('charts.totalLaid')}
                     </CardTitle>
                 </CardHeader>
                 <CardContent>
                     <div className="text-2xl font-bold text-green-900 dark:text-green-100">
                         {stats.totalLaid.toLocaleString()}
-                        <span className="ml-1 text-sm font-normal">tons</span>
+                        <span className="ml-1 text-sm font-normal">{t('charts.tons')}</span>
                     </div>
                 </CardContent>
             </Card>
@@ -110,7 +115,7 @@ const SummaryStats = ({ result }: { result: SimulationResult }) => {
             <Card className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-950/50 dark:to-purple-900/50">
                 <CardHeader className="pb-3">
                     <CardTitle className="text-sm font-medium text-purple-900 dark:text-purple-100">
-                        Avg Utilization
+                        {t('charts.avgUtilization')}
                     </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -123,7 +128,7 @@ const SummaryStats = ({ result }: { result: SimulationResult }) => {
             <Card className="bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-950/50 dark:to-orange-900/50">
                 <CardHeader className="pb-3">
                     <CardTitle className="text-sm font-medium text-orange-900 dark:text-orange-100">
-                        Efficiency
+                        {t('charts.efficiency')}
                     </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -137,33 +142,35 @@ const SummaryStats = ({ result }: { result: SimulationResult }) => {
 };
 
 export function SimulationCharts({ result }: SimulationChartsProps) {
+    const { t } = useLanguage();
+
     // Prepare data for charts with enhanced formatting
     const truckDistributionData = useMemo(() =>
         result.snapshots.map(snapshot => ({
             time: parseFloat((snapshot.time / 60).toFixed(1)),
-            'Plant Queue': snapshot.plantQueue,
-            'Loading': snapshot.loading,
-            'Traveling Loaded': snapshot.travelingLoaded,
-            'Paver Queue': snapshot.paverQueue,
-            'Unloading': snapshot.unloading,
-            'Traveling Empty': snapshot.travelingEmpty,
+            [t('charts.plantQueue')]: snapshot.plantQueue,
+            [t('charts.loading')]: snapshot.loading,
+            [t('charts.travelingLoaded')]: snapshot.travelingLoaded,
+            [t('charts.paverQueue')]: snapshot.paverQueue,
+            [t('charts.unloading')]: snapshot.unloading,
+            [t('charts.travelingEmpty')]: snapshot.travelingEmpty,
             total: snapshot.plantQueue + snapshot.loading + snapshot.travelingLoaded +
                 snapshot.paverQueue + snapshot.unloading + snapshot.travelingEmpty
-        })), [result]);
+        })), [result, t]);
 
     const utilizationData = useMemo(() =>
         result.snapshots.map(snapshot => ({
             time: parseFloat((snapshot.time / 60).toFixed(1)),
-            'Plant Active': snapshot.plantIdle ? 0 : 100,
-            'Paver Active': snapshot.paverIdle ? 0 : 100
-        })), [result]);
+            [t('charts.plantActive')]: snapshot.plantIdle ? 0 : 100,
+            [t('charts.paverActive')]: snapshot.paverIdle ? 0 : 100
+        })), [result, t]);
 
     const productionData = useMemo(() =>
         result.snapshots.map(snapshot => ({
             time: parseFloat((snapshot.time / 60).toFixed(1)),
-            'Produced': snapshot.plantProduced,
-            'Laid': snapshot.paverLaid
-        })), [result]);
+            [t('charts.produced')]: snapshot.plantProduced,
+            [t('charts.laid')]: snapshot.paverLaid
+        })), [result, t]);
 
     // Enhanced color palette
     const colors = {
@@ -189,13 +196,13 @@ export function SimulationCharts({ result }: SimulationChartsProps) {
                 <CardHeader className="pb-4">
                     <div className="flex items-center justify-between">
                         <div>
-                            <CardTitle className="text-xl">Truck Distribution Over Time</CardTitle>
+                            <CardTitle className="text-xl">{t('charts.truckDistribution')}</CardTitle>
                             <CardDescription className="mt-1">
-                                Real-time tracking of truck positions throughout the simulation
+                                {t('charts.truckDistributionDesc')}
                             </CardDescription>
                         </div>
                         <Badge variant="secondary" className="hidden sm:flex">
-                            {truckDistributionData.length} data points
+                            {truckDistributionData.length} {t('charts.dataPoints')}
                         </Badge>
                     </div>
                 </CardHeader>
@@ -239,14 +246,14 @@ export function SimulationCharts({ result }: SimulationChartsProps) {
                                     fontSize={12}
                                     tickLine={false}
                                     axisLine={false}
-                                    label={{ value: 'Time (hours)', position: 'insideBottom', offset: -10, style: { textAnchor: 'middle' } }}
+                                    label={{ value: t('charts.timeHours'), position: 'insideBottom', offset: -10, style: { textAnchor: 'middle' } }}
                                 />
                                 <YAxis
                                     stroke="hsl(var(--muted-foreground))"
                                     fontSize={12}
                                     tickLine={false}
                                     axisLine={false}
-                                    label={{ value: 'Number of Trucks', angle: -90, position: 'insideLeft', style: { textAnchor: 'middle' } }}
+                                    label={{ value: t('charts.numberOfTrucks'), angle: -90, position: 'insideLeft', style: { textAnchor: 'middle' } }}
                                 />
                                 <Tooltip content={<CustomTooltip />} />
                                 <Legend
@@ -255,7 +262,7 @@ export function SimulationCharts({ result }: SimulationChartsProps) {
                                 />
                                 <Area
                                     type="monotone"
-                                    dataKey="Plant Queue"
+                                    dataKey={t('charts.plantQueue')}
                                     stackId="1"
                                     stroke={colors.plantQueue}
                                     fill="url(#colorPlantQueue)"
@@ -263,7 +270,7 @@ export function SimulationCharts({ result }: SimulationChartsProps) {
                                 />
                                 <Area
                                     type="monotone"
-                                    dataKey="Loading"
+                                    dataKey={t('charts.loading')}
                                     stackId="1"
                                     stroke={colors.loading}
                                     fill="url(#colorLoading)"
@@ -271,7 +278,7 @@ export function SimulationCharts({ result }: SimulationChartsProps) {
                                 />
                                 <Area
                                     type="monotone"
-                                    dataKey="Traveling Loaded"
+                                    dataKey={t('charts.travelingLoaded')}
                                     stackId="1"
                                     stroke={colors.travelingLoaded}
                                     fill="url(#colorTravelingLoaded)"
@@ -279,7 +286,7 @@ export function SimulationCharts({ result }: SimulationChartsProps) {
                                 />
                                 <Area
                                     type="monotone"
-                                    dataKey="Paver Queue"
+                                    dataKey={t('charts.paverQueue')}
                                     stackId="1"
                                     stroke={colors.paverQueue}
                                     fill="url(#colorPaverQueue)"
@@ -287,7 +294,7 @@ export function SimulationCharts({ result }: SimulationChartsProps) {
                                 />
                                 <Area
                                     type="monotone"
-                                    dataKey="Unloading"
+                                    dataKey={t('charts.unloading')}
                                     stackId="1"
                                     stroke={colors.unloading}
                                     fill="url(#colorUnloading)"
@@ -295,7 +302,7 @@ export function SimulationCharts({ result }: SimulationChartsProps) {
                                 />
                                 <Area
                                     type="monotone"
-                                    dataKey="Traveling Empty"
+                                    dataKey={t('charts.travelingEmpty')}
                                     stackId="1"
                                     stroke={colors.travelingEmpty}
                                     fill="url(#colorTravelingEmpty)"
@@ -311,9 +318,9 @@ export function SimulationCharts({ result }: SimulationChartsProps) {
                 {/* Equipment Utilization */}
                 <Card className="overflow-hidden">
                     <CardHeader className="pb-4">
-                        <CardTitle className="text-xl">Equipment Utilization</CardTitle>
+                        <CardTitle className="text-xl">{t('charts.equipmentUtilization')}</CardTitle>
                         <CardDescription className="mt-1">
-                            Real-time operating status of plant and paver
+                            {t('charts.equipmentUtilizationDesc')}
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
@@ -330,7 +337,7 @@ export function SimulationCharts({ result }: SimulationChartsProps) {
                                         fontSize={12}
                                         tickLine={false}
                                         axisLine={false}
-                                        label={{ value: 'Time (hours)', position: 'insideBottom', offset: -10, style: { textAnchor: 'middle' } }}
+                                        label={{ value: t('charts.timeHours'), position: 'insideBottom', offset: -10, style: { textAnchor: 'middle' } }}
                                     />
                                     <YAxis
                                         domain={[0, 100]}
@@ -338,7 +345,7 @@ export function SimulationCharts({ result }: SimulationChartsProps) {
                                         fontSize={12}
                                         tickLine={false}
                                         axisLine={false}
-                                        label={{ value: 'Utilization (%)', angle: -90, position: 'insideLeft', style: { textAnchor: 'middle' } }}
+                                        label={{ value: t('charts.utilization'), angle: -90, position: 'insideLeft', style: { textAnchor: 'middle' } }}
                                     />
                                     <Tooltip content={<CustomTooltip />} />
                                     <Legend
@@ -347,7 +354,7 @@ export function SimulationCharts({ result }: SimulationChartsProps) {
                                     />
                                     <Line
                                         type="stepAfter"
-                                        dataKey="Plant Active"
+                                        dataKey={t('charts.plantActive')}
                                         stroke={colors.plantActive}
                                         strokeWidth={3}
                                         dot={false}
@@ -355,7 +362,7 @@ export function SimulationCharts({ result }: SimulationChartsProps) {
                                     />
                                     <Line
                                         type="stepAfter"
-                                        dataKey="Paver Active"
+                                        dataKey={t('charts.paverActive')}
                                         stroke={colors.paverActive}
                                         strokeWidth={3}
                                         dot={false}
@@ -370,9 +377,9 @@ export function SimulationCharts({ result }: SimulationChartsProps) {
                 {/* Production Progress */}
                 <Card className="overflow-hidden">
                     <CardHeader className="pb-4">
-                        <CardTitle className="text-xl">Production & Laying Progress</CardTitle>
+                        <CardTitle className="text-xl">{t('charts.productionProgress')}</CardTitle>
                         <CardDescription className="mt-1">
-                            Cumulative material production and laying over time
+                            {t('charts.productionProgressDesc')}
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
@@ -389,14 +396,14 @@ export function SimulationCharts({ result }: SimulationChartsProps) {
                                         fontSize={12}
                                         tickLine={false}
                                         axisLine={false}
-                                        label={{ value: 'Time (hours)', position: 'insideBottom', offset: -10, style: { textAnchor: 'middle' } }}
+                                        label={{ value: t('charts.timeHours'), position: 'insideBottom', offset: -10, style: { textAnchor: 'middle' } }}
                                     />
                                     <YAxis
                                         stroke="hsl(var(--muted-foreground))"
                                         fontSize={12}
                                         tickLine={false}
                                         axisLine={false}
-                                        label={{ value: 'Material (tons)', angle: -90, position: 'insideLeft', style: { textAnchor: 'middle' } }}
+                                        label={{ value: t('charts.material'), angle: -90, position: 'insideLeft', style: { textAnchor: 'middle' } }}
                                     />
                                     <Tooltip content={<CustomTooltip />} />
                                     <Legend
@@ -405,7 +412,7 @@ export function SimulationCharts({ result }: SimulationChartsProps) {
                                     />
                                     <Line
                                         type="monotone"
-                                        dataKey="Produced"
+                                        dataKey={t('charts.produced')}
                                         stroke={colors.produced}
                                         strokeWidth={3}
                                         dot={false}
@@ -413,7 +420,7 @@ export function SimulationCharts({ result }: SimulationChartsProps) {
                                     />
                                     <Line
                                         type="monotone"
-                                        dataKey="Laid"
+                                        dataKey={t('charts.laid')}
                                         stroke={colors.laid}
                                         strokeWidth={3}
                                         dot={false}
